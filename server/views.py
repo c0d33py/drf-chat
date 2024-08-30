@@ -28,16 +28,16 @@ class ChatEmptyView(TemplateView):
 
 
 class ChatSignInView(TemplateView):
-    template_name = 'chat/signin.html'
+    template_name = 'auth/signin.html'
 
 
 class ChatSignUpView(TemplateView):
-    template_name = 'chat/signup.html'
+    template_name = 'auth/signup.html'
 
 
 class ChatPasswordResetView(TemplateView):
-    template_name = 'chat/password-reset.html'
+    template_name = 'auth/password-reset.html'
 
 
 class ChatLockScreenView(TemplateView):
-    template_name = 'chat/lockscreen.html'
+    template_name = 'auth/lockscreen.html'

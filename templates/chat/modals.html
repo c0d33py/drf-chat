@@ -1,3 +1,4 @@
+{% load static %}
 <!-- Modal: Invite -->
 <div class="modal fade" id="modal-invite" tabindex="-1" aria-labelledby="modal-invite" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-fullscreen-xl-down">
@@ -141,7 +142,7 @@
 
                     <div class="profile-body">
                         <div class="avatar avatar-xl">
-                            <img class="avatar-img" src="assets/img/avatars/1.jpg" alt="#">
+                            <img class="avatar-img" src="{% static 'img/avatars/1.jpg' %}" alt="#">
                         </div>
 
                         <h4 class="mb-1">William Wright</h4>
@@ -300,7 +301,7 @@
 
                     <div class="profile-body">
                         <div class="avatar avatar-xl">
-                            <img class="avatar-img" src="assets/img/avatars/9.jpg" alt="#">
+                            <img class="avatar-img" src="{% static 'img/avatars/9.jpg' %}" alt="#">
 
                             <a href="#"
                                 class="badge badge-lg badge-circle bg-primary text-white border-outline position-absolute bottom-0 end-0">
