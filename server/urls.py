@@ -16,14 +16,29 @@ Including another URLconf
 """
 
 from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from .views import HomePageView
+from .views import *
 
 urlpatterns = [
     path('', HomePageView.as_view()),
+    path('chat-group', ChatGroupView.as_view(), name='chat_group'),
+    path('chat-direct', ChatDirectView.as_view(), name='chat_direct'),
+    path('chat-empty', ChatEmptyView.as_view(), name='chat_empty'),
+    path('chat-signin', ChatSignInView.as_view(), name='chat_signin'),
+    path('chat-signup', ChatSignUpView.as_view(), name='chat_signup'),
+    path('chat-lockscreen', ChatLockScreenView.as_view(), name='chat_lockscreen'),
+    path('password-reset', ChatPasswordResetView.as_view(), name='password_reset'),
     path('admin/', admin.site.urls),
     path('api/', include('chat.urls')),
     path('api/auth/', include('rest_framework.urls')),
-] + debug_toolbar_urls()
+]
+
+if settings.DEBUG:
+    urlpatterns += debug_toolbar_urls()
+
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
