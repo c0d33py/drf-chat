@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'debug_toolbar',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'chat',
     'profiles',
 ]
@@ -129,3 +131,10 @@ CHANNEL_LAYERS = {
 }
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:8008']
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+LOGIN_URL = '/chat-signin'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/chat-signin'

@@ -19,19 +19,29 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from .views import *
 
 urlpatterns = [
+    # Chat app
     path('', HomePageView.as_view()),
     path('chat-group', ChatGroupView.as_view(), name='chat_group'),
     path('chat-direct', ChatDirectView.as_view(), name='chat_direct'),
     path('chat-empty', ChatEmptyView.as_view(), name='chat_empty'),
-    path('chat-signin', ChatSignInView.as_view(), name='chat_signin'),
+    # Auth
+    path(
+        'chat-signin',
+        auth_views.LoginView.as_view(template_name='auth/signin.html'),
+        name='chat_signin',
+    ),
+    # path('logout', auth_views.LoginView.as_view(), name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('chat-signup', ChatSignUpView.as_view(), name='chat_signup'),
     path('chat-lockscreen', ChatLockScreenView.as_view(), name='chat_lockscreen'),
     path('password-reset', ChatPasswordResetView.as_view(), name='password_reset'),
+    # Comman
     path('admin/', admin.site.urls),
     path('api/', include('chat.urls')),
     path('api/auth/', include('rest_framework.urls')),
