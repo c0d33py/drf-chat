@@ -48,7 +48,7 @@
         {% include 'nevbar.html' %}
 
         {% include 'sidebar.html' %}
-
+        <button hx-ext="debug">Debug Me...</button>
         {% block body %} {% endblock %}
     </div>
 
@@ -56,6 +56,7 @@
 
     <script src="{% static 'js/vendor.js' %}"></script>
     <script src="{% static 'js/template.js' %}"></script>
+    <script src="{% static 'js/htmx.min.js' %}" defer></script>
 </body>
 
 </html>
