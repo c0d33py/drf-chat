@@ -56,7 +56,7 @@
 
                     {% for letter in first_letter %}
                     <div class="my-5">
-                        <small class="text-uppercase text-muted">{{ letter.grouper|title }}</small>
+                        <small class="text-uppercase text-muted">{{ letter.grouper }}</small>
                     </div>
                     {% for user in letter.list|dictsort:"username" %}
                     <!-- Card -->
