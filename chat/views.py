@@ -29,6 +29,9 @@ class UserListAPIView(generics.ListAPIView):
         exclude_fields = ['last_message']
         return super().get_serializer(exclude=exclude_fields, *args, **kwargs)
 
+    def get_queryset(self):
+        return super().get_queryset().exclude(id=self.request.user.id)
+
 
 class ChatRoomViewSet(viewsets.ModelViewSet):
     """Viewset for managing chat rooms, providing CRUD operations with authentication required."""

@@ -1,5 +1,17 @@
 {% load static %}
+<style>
+    .htmx-indicator {
+        display: none;
+    }
 
+    .htmx-request .htmx-indicator {
+        display: inline;
+    }
+
+    .htmx-request.htmx-indicator {
+        display: inline;
+    }
+</style>
 <div class="tab-pane fade h-100" id="tab-content-friends" role="tabpanel">
     <div class="d-flex flex-column h-100">
         <div class="hide-scrollbar">
@@ -25,8 +37,9 @@
                                 </div>
                             </div>
 
-                            <input type="text" class="form-control form-control-lg ps-0"
-                                placeholder="Search messages or users" aria-label="Search for messages or users...">
+                            <input type="text" class="form-control form-control-lg ps-0" name="search"
+                                placeholder="Search messages or users" aria-label="Search for messages or users..."
+                                hx-get="/api/users/" hx-trigger="keyup changed delay:500ms" placeholder="Search...">
                         </div>
                     </form>
 
@@ -51,58 +64,8 @@
                 </div>
 
                 <!-- List -->
-                <div class="card-list">
-                    {% regroup users|dictsort:"username" by username.0 as first_letter %}
-
-                    {% for letter in first_letter %}
-                    <div class="my-5">
-                        <small class="text-uppercase text-muted">{{ letter.grouper }}</small>
-                    </div>
-                    {% for user in letter.list|dictsort:"username" %}
-                    <!-- Card -->
-                    <div class="card border-0">
-                        <div class="card-body">
-                            <div class="row align-items-center gx-5">
-                                <div class="col-auto">
-                                    <a href="#" class="avatar">
-                                        <img class="avatar-img" src="{{ user.profile.image.url }}"
-                                            alt="{{ user.username }}">
-                                    </a>
-                                </div>
-                                <div class="col">
-                                    <h5><a href="#">{{ user.username }}</a></h5>
-                                    <p>last seen {{ user.last_login|default:"a long time ago" }}</p>
-                                </div>
-                                <div class="col-auto">
-                                    <!-- Dropdown -->
-                                    <div class="dropdown">
-                                        <a class="icon text-muted" href="#" role="button" data-bs-toggle="dropdown"
-                                            aria-expanded="false">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-more-vertical">
-                                                <circle cx="12" cy="12" r="1"></circle>
-                                                <circle cx="12" cy="5" r="1"></circle>
-                                                <circle cx="12" cy="19" r="1"></circle>
-                                            </svg>
-                                        </a>
-                                        <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="#">New message</a></li>
-                                            <li><a class="dropdown-item" href="#">Edit contact</a></li>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li><a class="dropdown-item text-danger" href="#">Block user</a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    {% endfor %}
-
+                <div class="card-list" id="user-container" hx-get="/api/users/" hx-trigger="load">
+                    <img id="indicator" class="htmx-indicator" src="{% static 'img/oval.svg' %}" />
                 </div>
 
             </div>

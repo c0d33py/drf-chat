@@ -56,7 +56,149 @@
     <script src="{% static 'js/vendor.js' %}"></script>
     <script src="{% static 'js/template.js' %}"></script>
     <script src="{% static 'js/htmx/htmx.min.js' %}" defer></script>
+    <script src="{% static 'js/moment/moment.min.js' %}"></script>
+    {% block script %}{% endblock script %}
+    <script>
+        document.addEventListener('htmx:afterOnLoad', (evt) => {
+            const usersList = JSON.parse(evt.detail.xhr.responseText).results;
+            userListRender(usersList)
+        });
 
+        function userListRender(usersList) {
+            // Sort users by username
+            usersList.sort((a, b) => a.username.localeCompare(b.username));
+
+            // Group users by the first letter
+            const groupedUsers = usersList.reduce((groups, user) => {
+                const firstChar = user.username[0].toUpperCase();
+                if (!groups[firstChar]) {
+                    groups[firstChar] = [];
+                }
+                groups[firstChar].push(user);
+                return groups;
+            }, {});
+
+            // Create HTML for grouped users
+            const userContainer = document.getElementById('user-container');
+            userContainer.innerHTML = '';
+
+            for (const [letter, users] of Object.entries(groupedUsers)) {
+                const groupElement = document.createElement('div');
+                groupElement.className = 'my-5';
+                groupElement.innerHTML = `<small class="text-uppercase text-muted">${letter}</small>`;
+
+                const userList = document.createElement('div');
+
+                users.forEach(user => {
+                    const cardElement = document.createElement('div');
+                    cardElement.className = 'card border-0 mb-3';
+                    cardElement.innerHTML = `
+                        <div class="card-body">
+                            <div class="row align-items-center gx-5">
+                                <div class="col-auto">
+                                    <a href="#" class="avatar">
+                                        <img class="avatar-img" src="${user.profile_image}" alt="${user.username}">
+                                    </a>
+                                </div>
+                                <div class="col">
+                                    <h5><a href="#">${user.username}</a></h5>
+                                    <p>Last seen ${user.last_login ? moment(user.last_login).fromNow() : 'a long time ago'}</p>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="dropdown">
+                                        <a class="icon text-muted" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" 
+                                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 
+                                                stroke-linejoin="round" class="feather feather-more-vertical">
+                                                <circle cx="12" cy="12" r="1"></circle>
+                                                <circle cx="12" cy="5" r="1"></circle>
+                                                <circle cx="12" cy="19" r="1"></circle>
+                                            </svg>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#">New message</a></li>
+                                            <li><a class="dropdown-item" href="#">Edit contact</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#">Block user</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    userList.appendChild(cardElement);
+                });
+
+                groupElement.appendChild(userList);
+                userContainer.appendChild(groupElement);
+            }
+
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Function to fetch chats data
+            async function fetchChats() {
+                try {
+                    const response = await fetch('/api/chats/');
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch chats');
+                    }
+
+                    const data = await response.json();
+                    renderChats(data.results); // Call the function to render chats
+                } catch (error) {
+                    console.error('Error fetching chats:', error);
+                }
+            }
+
+            // Function to render chats into the container
+            function renderChats(chatsList) {
+                const chatContainer = document.getElementById('chats-container');
+                chatContainer.innerHTML = ''; // Clear previous content
+
+                chatsList.forEach(chat => {
+                    const lastMessage = chat.last_message ? chat.last_message.message : 'No messages yet';
+                    const lastMessageTime = chat.last_message ? moment(chat.last_message.timestamp).fromNow() : 'N/A';
+                    const messageBadge = chat.last_message && !chat.last_message.is_read ?
+                        `<div class="badge badge-circle bg-primary ms-5">
+                    <span>1</span>
+                 </div>` : '';
+
+                    const chatHTML = `
+                    <a href="javascript:void(0)" class="card border-0 text-reset" data-target-user="${chat.id}" 
+                    hx-get="/chat-empty/${chat.id}" hx-trigger="load" hx-swap="outerHTML">
+                    <div class="card-body">
+                            <div class="row gx-5">
+                                <div class="col-auto">
+                                    <div class="avatar avatar-online">
+                                        <img src="${chat.profile_image}" alt="#" class="avatar-img">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <h5 class="me-auto mb-0">${chat.username}</h5>
+                                        <span class="text-muted extra-small ms-2">${lastMessageTime}</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="line-clamp me-auto">${lastMessage}</div>
+                                        ${messageBadge}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                    chatContainer.innerHTML += chatHTML;
+                });
+            }
+
+            // Fetch chats data when the page is loaded
+            // fetchChats();
+        });
+
+    </script>
 </body>
 
 </html>
